@@ -30,8 +30,8 @@ define_sets!(m, data) # Pass the sets to the JuMP model
 process_parameters!(m, data) # Pass the parameters to the JuMP model
 
 ##### Step 3: Build the model
-include("build_ac_opf_acdc.jl") # Define build_ac_opf! function
-build_ac_opf_acdc!(m) # Pass the model to the build_ac_opf! function
+include("build_ac_opf_acdc.jl") # Define build_ac_opf_acdc! function
+build_ac_opf_acdc!(m) # Pass the model to the build_ac_opf_acdc! function
 
 ##### Step 4: Solve the model
 optimize!(m) # Solve the model
