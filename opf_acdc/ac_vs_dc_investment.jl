@@ -17,8 +17,8 @@ ipopt = optimizer_with_attributes(Ipopt.Optimizer)
 ##### Step 1: Import the grid data and initialize the JuMP model
 # Select the MATPOWER case file
 path = pwd()
-case_file_ac = joinpath(path, "opf_ac", "pg", "pglib_opf_hvdc_case67_all_ac_different_costs.m")
-case_file_acdc = joinpath(path, "opf_acdc", "pg", "pglib_opf_hvdc_case67_different_costs.m")
+case_file_ac = joinpath(path, "opf_ac", "pg", "case67_investment_ac.m")
+case_file_acdc = joinpath(path, "opf_acdc", "pg", "case67_investment_dc.m")
 
 # For convenience, use the parser of Powermodels to convert the MATPOWER format file to a Julia dictionary
 data_ac = PowerModels.parse_file(case_file_ac)
