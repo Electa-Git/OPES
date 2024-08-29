@@ -16,11 +16,11 @@ path = pwd()
 
 ##### Step 1: Import the grid data and initialize the JuMP model
 # Select the MATPOWER case file
-case_file = joinpath(path, "test data", "pg","pglib_opf_case5_pjm.m")
-# case_file = "pg\\pglib_opf_case14_ieee.m"
-# case_file = "pg\\pglib_opf_case24_ieee_rts.m"
-# case_file = "pg\\pglib_opf_case300_ieee.m"
-# case_file = "pg\\pglib_opf_case1354_pegase.m"
+case_file = joinpath(path, "opf_ac", "pg","pglib_opf_case5_pjm.m")
+# case_file = joinpath(path, "opf_ac", "pg","pglib_opf_case14_ieee.m")
+# case_file = joinpath(path, "opf_ac", "pg","pglib_opf_case24_ieee_rts.m")
+# case_file = joinpath(path, "opf_ac", "pg","pglib_opf_case300_ieee.m")
+# case_file = joinpath(path, "opf_ac", "pg","pglib_opf_case1354_pegase.m")
 
 # For convenience, use the parser of Powermodels to convert the MATPOWER format file to a Julia dictionary
 data = PowerModels.parse_file(case_file)
