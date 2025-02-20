@@ -1,7 +1,6 @@
 # Declare packages to be used
 using PowerModels
 using Plots
-using Ipopt
 
 ###### OVERHEAD LINE
 
@@ -85,5 +84,3 @@ end
 
 # # Plot voltage magnitude over load angle
 pu = Plots.plot(lrange, ulc'./1000, xlabel = "Length in km ", ylabel = "|U_2| [kV]", fonntfamily = "Computer Modern", legend = false)
-
-

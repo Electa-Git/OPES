@@ -11,6 +11,4 @@ data = PowerModels.parse_file("case14.m")
 result = PowerModels.compute_ac_pf(data)
 
 # Inspect results
-for (b, bus) in result["solution"]["bus"]
-    println("Bus ", b, ": Vm = ", bus["vm"], " p.u.")
-end
+PowerModels.print_summary(result["solution"])
