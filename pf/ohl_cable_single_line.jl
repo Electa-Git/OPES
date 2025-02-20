@@ -1,14 +1,15 @@
 # Declare packages to be used
 using PowerModels
 using Plots
+using Ipopt
 
 ###### OVERHEAD LINE
 
 # Load test case data
-data = PowerModels.parse_file("/Users/hergun/Julia Files/case_ohl_cable.m")
+data = PowerModels.parse_file("case_ohl_cable.m")
 
 # Dfine the system parameters
-u_1 = 220e3 + 0.0im # voltage on bus 1 in Volt
+u_1 = 220e3# voltage on bus 1 in Volt
 snom = 30.0 # Appreant power deand on bus 2 in MVA
 zbase = u_1^2 / (data["baseMVA"] * 1e6) # base impedance od system in Ohm
 f = 50 # Hz
@@ -50,7 +51,7 @@ pu = Plots.plot(ϕrange * 180 / pi, ul'./1000, xlabel = "Load angle in °", ylab
 ###### UNDERGROUND CABLE
 
 # Load test case data
-data = PowerModels.parse_file("/Users/hergun/Julia Files/case_ohl_cable.m")
+data = PowerModels.parse_file("case_ohl_cable.m")
 
 # Define the underground cable parameters
 r = 0.0113 # ohm/km
@@ -76,12 +77,13 @@ for l in lrange
     ql = snom * sin(0.0) # reactive power demand
     data["load"]["1"]["pd"] = pl / data["baseMVA"] # overwrite active power demand in data
     data["load"]["1"]["qd"] = ql / data["baseMVA"] # overwrite reactive power demand in data
-
     result = PowerModels.compute_ac_pf(data) # solve power flow
 
     ulc[idx] = result["solution"]["bus"]["2"]["vm"] * u_1 # write voltage magnitude to array
     global idx = idx + 1
 end
 
-# Plot voltage magnitude over load angle
+# # Plot voltage magnitude over load angle
 pu = Plots.plot(lrange, ulc'./1000, xlabel = "Length in km ", ylabel = "|U_2| [kV]", fonntfamily = "Computer Modern", legend = false)
+
+
