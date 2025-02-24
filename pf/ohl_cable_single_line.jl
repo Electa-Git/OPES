@@ -84,3 +84,59 @@ end
 
 # # Plot voltage magnitude over load angle
 pu = Plots.plot(lrange, ulc'./1000, xlabel = "Length in km ", ylabel = "|U_2| [kV]", fonntfamily = "Computer Modern", legend = false)
+
+
+##################### SECTION REACTIVE POWER FLOWS AND COMPENSATION #####################
+data = PowerModels.parse_file("case_ohl_cable.m")
+# Define the underground cable parameters
+r = 0.0113 # ohm/km
+x = 0.111 # ohm/km
+c = 231.0e-9# nF/km
+bc = ( 2 * f * pi) * c  / 2  # 1/ohm
+l = 100 # km
+
+data["branch"]["1"]["br_r"] = r * l / zbase # overwrite resistance in data
+data["branch"]["1"]["br_x"] = x * l / zbase # overwrite reactance in data
+data["branch"]["1"]["b_fr"] = bc * l * zbase # overwrite from shunt admittance in data
+data["branch"]["1"]["b_to"] = bc * l * zbase # overwrite to shunt admittance in data
+
+pl = snom * cos(0.0) # active power demand
+ql = snom * sin(0.0) # reactive power demand
+data["load"]["1"]["pd"] = pl / data["baseMVA"] # overwrite active power demand in data
+data["load"]["1"]["qd"] = ql / data["baseMVA"] # overwrite reactive power demand in data
+
+result = PowerModels.compute_ac_pf(data)
+PowerModels.update_data!(data, result["solution"])
+flows = calc_branch_flow_ac(data)
+PowerModels.update_data!(data, flows)
+
+
+PowerModels.print_summary(result["solution"])
+println("Active power flow  1 -> 2: ", data["branch"]["1"]["pf"] * data["baseMVA"], " MW")
+println("Active power flow  2 -> 1: ", data["branch"]["1"]["pt"] * data["baseMVA"], " MW")
+println("Rective power flow  1 -> 2: ", data["branch"]["1"]["qf"] * data["baseMVA"], " Mvar")
+println("Rective power flow  2 -> 1: ", data["branch"]["1"]["qt"] * data["baseMVA"], " Mvar")
+
+
+############# Calcualte the value for the compensation reactances #############
+reactive_flow = data["branch"]["1"]["qf"] * data["baseMVA"] + data["branch"]["1"]["qt"] * data["baseMVA"]
+q_comp = reactive_flow * 1e6 / 2 # divide by half because of double sided compensation
+x_comp = (u_1^2 / q_comp) / zbase # calculate reactance value in pu
+b_comp = 1 / x_comp # convert to shunt admittance
+
+data["shunt"]["1"] = Dict()
+data["shunt"]["1"]["shunt_bus"] = 1
+data["shunt"]["1"]["status"] = 1
+data["shunt"]["1"]["index"] = 1
+data["shunt"]["1"]["gs"] = 0.0
+data["shunt"]["1"]["bs"] = b_comp
+
+data["shunt"]["2"] = Dict()
+data["shunt"]["2"]["shunt_bus"] = 2
+data["shunt"]["2"]["status"] = 1
+data["shunt"]["2"]["index"] = 2
+data["shunt"]["2"]["gs"] = 0.0
+data["shunt"]["2"]["bs"] = b_comp
+
+result = PowerModels.compute_ac_pf(data)
+PowerModels.print_summary(result["solution"])
